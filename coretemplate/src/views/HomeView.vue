@@ -4,7 +4,7 @@ import NavMenu from '@/components/atomic/organisms/NavMenu.vue';
 import BaseLayout from '@/components/templates/BaseLayout.vue';
 import HeaderLayout from '@/components/templates/HeaderLayout.vue';
 import { mountTraducciones } from '@/core/composables/gestorTraducciones';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { IDIOMAS } from '@/core/constantes';
 import MainLayout from '@/components/templates/MainLayout.vue';
 import TituloPage from '@/components/atomic/atoms/TituloPage.vue';
@@ -12,11 +12,18 @@ import TituloPage from '@/components/atomic/atoms/TituloPage.vue';
 import FooterLayout from '@/components/templates/FooterLayout.vue';
 import LogoCorporativo from '@/components/atomic/atoms/icons/LogoCorporativo.vue';
 import type { Idioma } from '@/core/types';
-import { onMounted } from 'vue';
+import { onMounted, provide, ref } from 'vue';
 import TraductorComponent from '@/components/atomic/molecules/TraductorComponent.vue';
+import UserCard from '@/components/atomic/organisms/UserCard.vue';
+import UserCardSkeleton from '@/components/atomic/molecules/UserCardSkeleton.vue';
+import SkeletonLoader from '@/components/atomic/atoms/SkeletonLoader.vue';
 
 const router = useRouter();
+const route = useRoute();
 const currentPage = 'home';
+const currentLang = ref<Idioma>(route.params.lang as Idioma); // Idioma por defecto
+
+provide('currentLang', currentLang); // Proporcionamos el idioma actual para que pueda ser inyectado en otros componentes
 
 //Se definirá lo del traductor
 const manager = mountTraducciones();
@@ -24,15 +31,16 @@ const manager = mountTraducciones();
 function cambioIdioma(nuevo: Idioma) {
 	// manager.value.setIdioma(nuevo)
 	const currentPath = router.currentRoute.value.fullPath
-	const currentLang = IDIOMAS.find(sub => currentPath.includes(`/${sub}`))
+	const lang = IDIOMAS.find(sub => currentPath.includes(`/${sub}`))
 
-	const newPath = currentPath.replace(`/${currentLang}`, `/${nuevo}`)
-
+	const newPath = currentPath.replace(`/${lang}`, `/${nuevo}`)
 	document.documentElement.lang = nuevo
+	currentLang.value = nuevo; // Actualizamos el idioma actual
+	console.log('Idioma actual = ', currentLang.value)
 	router.push(newPath)
 };
 
-onMounted(async () => {
+onMounted(() => {
 	manager.value.getTraduccionesDeComponentes(currentPage)
 	// const respuestaApi = manager.value.getApiTraducciones(manager.value.getIdioma(), currentPage)
 	// const promises = []
@@ -52,6 +60,9 @@ onMounted(async () => {
 				<template #title>
 					<TraductorComponent page="Carrito" label="carrito">
 						Otra forma de traducir
+						<template #fallback>
+							<SkeletonLoader height="18px" width="109px" borderRadius="0.25em" />
+						</template>
 					</TraductorComponent>
 				</template>
 				<template #navigation>
@@ -78,6 +89,14 @@ onMounted(async () => {
 							Titulo del Home
 						</TraducirTexto> -->
 					</TituloPage>
+				</template>
+				<template #usercard>
+					<Suspense>
+						<UserCard />
+						<template #fallback>
+							<UserCardSkeleton />
+						</template>
+					</Suspense>
 				</template>
 			</MainLayout>
 		</template>

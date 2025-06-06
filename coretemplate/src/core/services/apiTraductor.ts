@@ -106,11 +106,12 @@ export class ApiTraductor {
 	}
 
 	public async getTraduccionAsync(idioma: Idioma, page: string, label: string): Promise<string | null> {
+		console.log(`Obteniendo traducción para ${idioma}.${page}.${label} ...`);
 		return new Promise((resolve) => {
 			setTimeout(() => {
 				const traduccion = ApiTraductor.getTraduccion(idioma, page, label);
 				resolve(traduccion);
-			}, 1000);
+			}, 5000);
 		});
 	}
 

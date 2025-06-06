@@ -15,3 +15,15 @@
 		</footer>
 	</div>
 </template>
+
+<style scoped>
+main {
+	max-width: 620px;
+	margin: 0 auto;
+	padding-top: 32px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+</style>

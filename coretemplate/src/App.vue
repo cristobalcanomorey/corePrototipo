@@ -7,6 +7,13 @@ import { RouterView } from "vue-router";
 </template>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Mouse+Memoirs&display=swap');
+*, ::before, ::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Mouse Memoirs", sans-serif;
+}
 /* @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');@font-face {
     font-family: 'Switzer-Regular';
     src: url('/assets/fonts/Switzer-Regular.otf')

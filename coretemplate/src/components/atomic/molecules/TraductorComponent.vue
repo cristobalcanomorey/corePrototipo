@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-import NuevoTraducir from '@/components/atomic/atoms/NuevoTraducir.vue'
-import { useRoute } from 'vue-router';
+import AsyncTraducir from '@/components/atomic/atoms/AsyncTraducir.vue'
 import type { Idioma, Pagina } from '@/core/types';
-import { computed } from 'vue'
-import { useSlots } from 'vue'
+import { computed, useSlots, inject } from 'vue'
+// import SkeletonLoader from '../atoms/SkeletonLoader.vue';
 
-const route = useRoute()
 const slots = useSlots()
 
 const props = defineProps<{
@@ -13,6 +11,9 @@ const props = defineProps<{
 	page: Pagina
 	label: string
 }>()
+
+const currentLang = inject<Idioma>('currentLang', 'es') // Valor por defecto si no se inyecta
+
 const defaultText = computed<string>(() => {
 	if (!slots.default) {
 		return ''
@@ -29,5 +30,16 @@ const defaultText = computed<string>(() => {
 </script>
 
 <template>
-	<NuevoTraducir :key="route.params.lang as string || 'es'" v-bind="props" :defecto="defaultText" />
+	<Suspense timeout="0">
+		<template #default>
+			<AsyncTraducir :key="currentLang" v-bind="props" :defecto="defaultText" :idioma="currentLang" />
+		</template>
+		<template #fallback>
+
+			<slot name="fallback">
+				<!-- <SkeletonLoader height="1.5em" width="100%" borderRadius="0.25em" /> -->
+				 {{ defaultText }}
+			</slot>
+		</template>
+	</Suspense>
 </template>

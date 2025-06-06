@@ -42,7 +42,7 @@ router.beforeEach((to, from, next) => {
 	if (to.name === '404') {
 		return next()
 	}
-	const lang = to.params.lang as string | undefined
+	const lang = to.params.lang as Idioma | undefined
 	if (!lang || !checkIdioma(lang)) {
 		next({ name: '404' });
 	} else {
