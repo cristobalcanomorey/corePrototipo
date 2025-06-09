@@ -1,4 +1,4 @@
-import type { Idioma, TraduccionItem, DummyTraduccionesNueva } from "@/core/types";
+import type { Idioma, TraduccionItem, DummyTraduccionesNueva, NuevasTraducciones } from "@/core/types";
 import { ref, type Ref } from 'vue';
 
 export class ApiTraductor {
@@ -139,7 +139,7 @@ export class ApiTraductor {
 	// 	});
 	// }
 
-	public async getTraduccionesPaginaAsync(idioma: Idioma, page: string): Promise<TraduccionItem[]> {
+	public async getTraduccionesPaginaAsync(idioma: Idioma, page: string): Promise<NuevasTraducciones> {
 		return new Promise((resolve) => {
 			setTimeout(() => {
 				resolve(ApiTraductor.getTraduccionesPagina(idioma, page));
@@ -158,7 +158,7 @@ INNER JOIN seo_paginas ON seo_paginas.id = traducciones.seo_pagina_id
 	 * @param page
 	 * @returns
 	 */
-	static getTraduccionesPagina(idioma: Idioma, page: string): TraduccionItem[] {
+	static getTraduccionesPagina(idioma: Idioma, page: string): NuevasTraducciones {
 		// Llamada a Api, suponemos que pag es nav
 		console.log(`Select todo from traducciones where page = '${page}'`);
 
@@ -245,7 +245,7 @@ INNER JOIN seo_paginas ON seo_paginas.id = traducciones.seo_pagina_id
 
 	public insertTraduccion(idioma: string, page: string, label: string, traduccion: string) {
 		// Llamada a Api
-		// console.log(`${idioma}: Insertando traducción: ${label} -> ${traduccion} en ${page}`);
+		console.log(`${idioma}: Insertando traducción: ${label} -> ${traduccion} en ${page}`);
 		if (idioma === 'es') {
 			ApiTraductor.dummyTraducciones.value[0].push({ page, label, traduccion });
 		} else if (idioma === 'en') {

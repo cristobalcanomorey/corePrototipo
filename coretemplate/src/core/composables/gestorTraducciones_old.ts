@@ -1,9 +1,9 @@
 // Translator
 import { ApiTraductor } from '@/core/services/apiTraductor'
 import { filtrarNuevasTraduccionesNoExistentes } from '@/core/utils/helpers';
-import { inject, provide, shallowRef, isRef, ref, type Ref } from 'vue';
-import type { NuevasTraducciones, Idioma, TraduccionItem, Pagina } from '@/core/types'
-import { IDIOMAS } from '@/core/constantes';
+import { watch, inject, provide, shallowRef, isRef, ref, type Ref } from 'vue';
+import type { NuevasTraducciones, Idioma, TraduccionItem } from '@/core/types'
+import { PAGINAS } from '@/core/constantes';
 
 
 export function mountTraducciones() {
@@ -28,13 +28,12 @@ class TraductorManager {
 
 	public idiomasBuscados: Ref<Idioma[]> = ref([]) // Aquí se guardan los idiomas que se han buscado en la API
 	private deLaApi: Ref<TraduccionItem[]> = ref([] as TraduccionItem[]) // Aquí se guardan las traducciones obtenidas de la API
-	public messages = ref<NuevasTraducciones>([] as NuevasTraducciones) // Aquí se guardan las traducciones obtenidas de la API
+	public messages = ref<TraduccionItem[]>([] as TraduccionItem[]) // Aquí se guardan las traducciones obtenidas de la API
 	//recoge los mensajes de los slots de cada componente TraducirTexto
 	public nuevasT = ref<NuevasTraducciones>([] as NuevasTraducciones)
 	public cargandoTraducciones: Ref<boolean> = ref(false)
 	// Los labels que se usan en la página actual
 	public labelsRelevantes = ref<string[]>([])
-	public paginas = ref<Pagina[]>([])
 	private api
 	private respuestas = ref<TraduccionItem[][]>([] as TraduccionItem[][])
 
@@ -42,6 +41,30 @@ class TraductorManager {
 		this.setIdioma(document.documentElement.lang as Idioma)
 
 		this.api = new ApiTraductor()
+
+		watch(
+			() => this.idioma.value,
+			async (idiomaActual) => {
+				console.log(`Cambiando idioma a: ${idiomaActual}`);
+				if (!this.idiomasBuscados.value.includes(idiomaActual as Idioma)) {
+					this.cargandoTraducciones.value = true
+					const promises = []
+					for (const pagina of PAGINAS) {
+						const trads = this.api.getTraduccionesPaginaAsync(idiomaActual as Idioma, pagina)
+						promises.push(trads)
+					}
+					this.respuestas.value = await Promise.all(promises)
+				}
+			},
+			{ immediate: true }
+		)
+		watch(
+			() => this.respuestas.value,
+			(newResponse) => {
+				console.log('Respuestas de la API recibidas:', newResponse);
+				this.cargandoTraducciones.value = false
+				this.appendTraducciones(newResponse) //cuando responde la API, añade las traducciones
+			}, { immediate: true })
 
 	}
 
@@ -60,7 +83,7 @@ class TraductorManager {
 		}
 	}
 
-	public guardaNueva(idioma: Idioma, page: Pagina, label: string, original: string) {
+	public guardaNueva(idioma: Idioma, page: string, label: string, original: string) {
 		// mete dentro de originales
 		const nuevaTraduccion = {
 			idioma: idioma,
@@ -70,27 +93,12 @@ class TraductorManager {
 		} as TraduccionItem
 
 		this.nuevasT.value.push(nuevaTraduccion)
-		this.addPagina(page)
-		console.log('Guarda nueva: ', nuevaTraduccion)
 		if (!this.existeTraduccion(idioma, page, label)) {
 			this.messages.value.push(nuevaTraduccion);
 		}
 	}
 
-	public addPagina(page: Pagina) {
-		if (!this.existePagina(page)) {
-			this.paginas.value.push(page);
-			console.log(`Página añadida: ${page}`);
-		}
-	}
-
-	public existePagina(page: Pagina): boolean {
-		return this.paginas.value.includes(page);
-	}
-
 	public existeTraduccion(idioma: Idioma, page: string, label: string): boolean {
-		console.log(`Comprobando si existe traducción para ${idioma}.${page}.${label}...`);
-		console.log(this.messages.value.find(item => item.idioma === idioma && item.page === page && item.label === label));
 		return this.messages.value.some(
 			item =>
 				item.idioma === idioma &&
@@ -112,8 +120,6 @@ class TraductorManager {
 		const response = this.messages.value.find(
 			item => item.idioma === idioma && item.page === page && item.label === label
 		);
-		console.log(`Buscando traducción para ${idioma}.${page}.${label}...`);
-		console.log('Respuesta encontrada:', response);
 		if (response) {
 			// console.log(`Traducción encontrada: ${response.traduccion}`);
 			return response.traduccion;
@@ -124,10 +130,6 @@ class TraductorManager {
 		return defecto ?? ''
 	}
 
-	public async getApiTraduccion(idioma: Idioma, page: Pagina, label: string): Promise<string | null> {
-		return await this.api.getTraduccionAsync(idioma, page, label)
-	}
-
 	public async getApiTraducciones(idioma: Idioma, page: string): Promise<TraduccionItem[]> {
 		this.cargandoTraducciones.value = true
 
@@ -136,11 +138,10 @@ class TraductorManager {
 		return trad
 	}
 
-	public async getTraduccionesDeApi(idioma: Idioma, page: string) {
-		this.messages.value = await this.api.getTraduccionesPaginaAsync(idioma, page)
-	}
+	public getTraduccionesDeComponentes(page: string): TraduccionItem[] {
+		console.log('Obtiene las traducciones de: ' + page);
+		// this.cargandoTraducciones.value = true;
 
-	public getTraduccionesDeComponentes(): TraduccionItem[] {
 		/**
 		 * Obtiene las traducciones que han recopilado los componentes TraducirTexto
 		 * y las guarda en messages
@@ -150,7 +151,7 @@ class TraductorManager {
 		 * Evita guardar duplicadas (this.messages.value = this.nuevasT.value ?)
 		 */
 		if (diferencia.length !== 0) {
-			this.setApiTraducciones(diferencia); // Guarda las nuevas traducciones en la API
+			this.setApiTraducciones(diferencia);
 			this.messages.value.push(...diferencia);
 		}
 
@@ -172,6 +173,7 @@ class TraductorManager {
 
 
 	private setApiTraducciones(trad: NuevasTraducciones) {
+
 		for (const nueva of trad) {
 			this.api.insertTraduccion(nueva.idioma ? nueva.idioma : '', nueva.page, nueva.label, nueva.traduccion)
 		}

@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import AsyncTraducir from '@/components/atomic/atoms/AsyncTraducir.vue'
 import type { Idioma, Pagina } from '@/core/types';
-import { computed, useSlots, inject } from 'vue'
+import { computed, useSlots, inject, onMounted } from 'vue'
+import { useTraducciones } from '@/core/composables/gestorTraducciones';
 // import SkeletonLoader from '../atoms/SkeletonLoader.vue';
 
 const slots = useSlots()
+const manager = useTraducciones()
 
 const props = defineProps<{
 	idioma?: Idioma
@@ -25,6 +27,10 @@ const defaultText = computed<string>(() => {
 
 	return slots.default()[0].children as string || '' // Asumimos que el primer nodo es un texto simple
 
+})
+
+onMounted(() => {
+	manager.value.guardaNueva(currentLang, props.page, props.label, defaultText.value)
 })
 
 </script>

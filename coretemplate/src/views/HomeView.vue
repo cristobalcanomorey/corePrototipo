@@ -40,8 +40,9 @@ function cambioIdioma(nuevo: Idioma) {
 	router.push(newPath)
 };
 
-onMounted(() => {
-	manager.value.getTraduccionesDeComponentes(currentPage)
+onMounted(async () => {
+	// await manager.value.getTraduccionesDeApi(currentLang.value, currentPage)
+	manager.value.getTraduccionesDeComponentes()
 	// const respuestaApi = manager.value.getApiTraducciones(manager.value.getIdioma(), currentPage)
 	// const promises = []
 	// promises.push(respuestaApi)
@@ -83,7 +84,7 @@ onMounted(() => {
 				<template #title>
 					<TituloPage class="home-title">
 						<TraductorComponent page="Home" label="titulo">
-							Otra forma de traducir
+							Texto por defecto
 						</TraductorComponent>
 						<!-- <TraducirTexto :page="currentPage" label="titulo">
 							Titulo del Home

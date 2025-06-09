@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import TraducirTexto from './TraducirTexto.vue';
+import TraductorComponent from '@/components/atomic/molecules/TraductorComponent.vue';
+import SkeletonLoader from '@/components/atomic/atoms/SkeletonLoader.vue'
 // import { useRoute } from 'vue-router'
 import type { Idioma } from '@/core/types';
 import { inject } from 'vue';
@@ -12,14 +13,26 @@ const currentLang = inject<Idioma>('currentLang', 'es') // Valor por defecto si 
 <template>
 	<nav>
 		<RouterLink :to="{ name: 'Home', params: { lang: currentLang } }">
-			<TraducirTexto  :page="currentPage??''" label="Home">
+			<TraductorComponent :page="currentPage" label="Home">
 				Home
-			</TraducirTexto>
+				<template #fallback>
+					<SkeletonLoader height="18px" width="109px" borderRadius="0.25em" />
+				</template>
+			</TraductorComponent>
+			<!-- <TraducirTexto  :page="currentPage??''" label="Home">
+				Home
+			</TraducirTexto> -->
 		</RouterLink>
 		<RouterLink :to="{ name: 'About', params: { lang: currentLang } }">
-			<TraducirTexto  :page="currentPage??''" label="About">
+			<!-- <TraducirTexto  :page="currentPage??''" label="About">
 				About
-			</TraducirTexto>
+			</TraducirTexto> -->
+			<TraductorComponent :page="currentPage" label="Home">
+				About
+				<template #fallback>
+					<SkeletonLoader height="18px" width="109px" borderRadius="0.25em" />
+				</template>
+			</TraductorComponent>
 		</RouterLink>
 	</nav>
 </template>
