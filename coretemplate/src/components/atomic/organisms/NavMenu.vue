@@ -13,7 +13,7 @@ const currentLang = inject<Idioma>('currentLang', 'es') // Valor por defecto si 
 <template>
 	<nav>
 		<RouterLink :to="{ name: 'Home', params: { lang: currentLang } }">
-			<TraductorComponent :page="currentPage" label="Home">
+			<TraductorComponent :idioma="currentLang" :page="currentPage" label="Home">
 				Home
 				<template #fallback>
 					<SkeletonLoader height="18px" width="109px" borderRadius="0.25em" />
@@ -27,7 +27,7 @@ const currentLang = inject<Idioma>('currentLang', 'es') // Valor por defecto si 
 			<!-- <TraducirTexto  :page="currentPage??''" label="About">
 				About
 			</TraducirTexto> -->
-			<TraductorComponent :page="currentPage" label="Home">
+			<TraductorComponent :idioma="currentLang" :page="currentPage" label="Home">
 				About
 				<template #fallback>
 					<SkeletonLoader height="18px" width="109px" borderRadius="0.25em" />

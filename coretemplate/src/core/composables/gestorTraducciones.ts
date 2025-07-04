@@ -71,7 +71,7 @@ class TraductorManager {
 
 		this.nuevasT.value.push(nuevaTraduccion)
 		this.addPagina(page)
-		console.log('Guarda nueva: ', nuevaTraduccion)
+		// console.log('Guarda nueva: ', nuevaTraduccion)
 		if (!this.existeTraduccion(idioma, page, label)) {
 			this.messages.value.push(nuevaTraduccion);
 		}
@@ -89,8 +89,8 @@ class TraductorManager {
 	}
 
 	public existeTraduccion(idioma: Idioma, page: string, label: string): boolean {
-		console.log(`Comprobando si existe traducción para ${idioma}.${page}.${label}...`);
-		console.log(this.messages.value.find(item => item.idioma === idioma && item.page === page && item.label === label));
+		// console.log(`Comprobando si existe traducción para ${idioma}.${page}.${label}...`);
+		// console.log(this.messages.value.find(item => item.idioma === idioma && item.page === page && item.label === label));
 		return this.messages.value.some(
 			item =>
 				item.idioma === idioma &&

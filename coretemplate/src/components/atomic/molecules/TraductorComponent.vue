@@ -9,12 +9,15 @@ const slots = useSlots()
 const manager = useTraducciones()
 
 const props = defineProps<{
-	idioma?: Idioma
+	idioma: Idioma
 	page: Pagina
 	label: string
 }>()
 
 const currentLang = inject<Idioma>('currentLang', 'es') // Valor por defecto si no se inyecta
+
+const idiomaActual = computed<Idioma>(() => props.idioma ?? currentLang)
+console.log('Idioma actual:', idiomaActual)
 
 const defaultText = computed<string>(() => {
 	if (!slots.default) {
@@ -30,6 +33,7 @@ const defaultText = computed<string>(() => {
 })
 
 onMounted(() => {
+	// console.log('guardaNueva', currentLang, props.page, props.label, defaultText.value)
 	manager.value.guardaNueva(currentLang, props.page, props.label, defaultText.value)
 })
 

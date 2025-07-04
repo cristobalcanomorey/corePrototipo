@@ -59,7 +59,7 @@ onMounted(async () => {
 		<template #header>
 			<HeaderLayout>
 				<template #title>
-					<TraductorComponent page="Carrito" label="carrito">
+					<TraductorComponent :idioma="currentLang" page="Carrito" label="carrito">
 						Otra forma de traducir
 						<template #fallback>
 							<SkeletonLoader height="18px" width="109px" borderRadius="0.25em" />
@@ -83,7 +83,7 @@ onMounted(async () => {
 			<MainLayout>
 				<template #title>
 					<TituloPage class="home-title">
-						<TraductorComponent page="Home" label="titulo">
+						<TraductorComponent :idioma="currentLang" page="Home" label="titulo">
 							Texto por defecto
 						</TraductorComponent>
 						<!-- <TraducirTexto :page="currentPage" label="titulo">
