@@ -1,5 +1,5 @@
 // Translator
-import { ApiTraductor } from '@/core/services/apiTraductor'
+import { ApiTraductor } from '@/core/services/ApiTraductor'
 import { filtrarNuevasTraduccionesNoExistentes } from '@/core/utils/helpers';
 import { watch, inject, provide, shallowRef, isRef, ref, type Ref } from 'vue';
 import type { NuevasTraducciones, Idioma, TraduccionItem } from '@/core/types'

@@ -16,8 +16,8 @@ const props = defineProps<{
 
 const currentLang = inject<Idioma>('currentLang', 'es') // Valor por defecto si no se inyecta
 
-const idiomaActual = computed<Idioma>(() => props.idioma ?? currentLang)
-console.log('Idioma actual:', idiomaActual)
+// const idiomaActual = computed<Idioma>(() => props.idioma ?? currentLang)
+// console.log('Idioma actual:', idiomaActual)
 
 const defaultText = computed<string>(() => {
 	if (!slots.default) {

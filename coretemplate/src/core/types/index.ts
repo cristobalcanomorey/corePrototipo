@@ -1,6 +1,6 @@
 import { IDIOMAS, PAGINAS } from '@/core/constantes';
 import type { Ref } from 'vue';
-import type { ApiTraductor } from '../services/apiTraductor';
+import type { ApiTraductor } from '../services/ApiTraductor';
 
 export type Idioma = typeof IDIOMAS[number];
 export type TraduccionItem = {

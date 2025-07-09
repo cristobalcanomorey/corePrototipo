@@ -1,11 +1,25 @@
 import type { Idioma, TraduccionItem, DummyTraduccionesNueva, NuevasTraducciones } from "@/core/types";
+import { TABLE_TRANSLATIONS } from "@/core/constantes";
+import { Api } from "@/core/services/Api";
 import { ref, type Ref } from 'vue';
 
-export class ApiTraductor {
+export class ApiTraductor extends Api {
 	static traducciones: object;
 	static dummyTraducciones: Ref<TraduccionItem[][]>;
 	static dummyTraduccionesNueva: Ref<DummyTraduccionesNueva>;
+	static TABLE_TRANSLATIONS_NAME: string = TABLE_TRANSLATIONS.name;
+	static ROW_TRANSLATION: string = TABLE_TRANSLATIONS.row_translate;
+	static ROW_LABEL: string = TABLE_TRANSLATIONS.row_label;
+	static ROW_PAGE: string = TABLE_TRANSLATIONS.row_page;
+	static TABLE_PAGE: string = TABLE_TRANSLATIONS.table_page;
+	static TABLE_PAGE_NAME: string = TABLE_TRANSLATIONS.table_page_name;
+
+	private idioma: Idioma;
+	private page: string;
+	private label: string;
+	private default: string;
 	constructor() {
+		super();
 		// this.idioma = idioma as Idioma;
 		ApiTraductor.dummyTraduccionesNueva = ref({
 			es: [
@@ -106,7 +120,7 @@ export class ApiTraductor {
 	}
 
 	public async getTraduccionAsync(idioma: Idioma, page: string, label: string): Promise<string | null> {
-		console.log(`Obteniendo traducción para ${idioma}.${page}.${label} ...`);
+		// console.log(`Obteniendo traducción para ${idioma}.${page}.${label} ...`);
 		return new Promise((resolve) => {
 			setTimeout(() => {
 				const traduccion = ApiTraductor.getTraduccion(idioma, page, label);
@@ -116,14 +130,14 @@ export class ApiTraductor {
 	}
 
 	public static getTraduccion(idioma: Idioma, page: string, label: string): string | null {
-		console.log(`Select traduccion from traducciones_${idioma} where page = '${page}' and label = '${label}'`);
+		// console.log(`Select traduccion from traducciones_${idioma} where page = '${page}' and label = '${label}'`);
 		const traduccion = ApiTraductor.dummyTraduccionesNueva.value[idioma]?.find(
 			item => item.page === page && item.label === label
 		)?.traduccion;
 		if (traduccion) {
 			return traduccion;
 		}
-		console.warn(`Traducción no encontrada para ${idioma}.${page}.${label}. Usando null por defecto.`);
+		// console.warn(`Traducción no encontrada para ${idioma}.${page}.${label}. Usando null por defecto.`);
 		return null;
 	}
 

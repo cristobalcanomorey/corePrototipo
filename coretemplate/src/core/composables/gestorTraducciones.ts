@@ -1,9 +1,9 @@
 // Translator
-import { ApiTraductor } from '@/core/services/apiTraductor'
+import { ApiTraductor } from '@/core/services/ApiTraductor'
 import { filtrarNuevasTraduccionesNoExistentes } from '@/core/utils/helpers';
 import { inject, provide, shallowRef, isRef, ref, type Ref } from 'vue';
 import type { NuevasTraducciones, Idioma, TraduccionItem, Pagina } from '@/core/types'
-import { IDIOMAS } from '@/core/constantes';
+// import { IDIOMAS } from '@/core/constantes';
 
 
 export function mountTraducciones() {
@@ -80,7 +80,7 @@ class TraductorManager {
 	public addPagina(page: Pagina) {
 		if (!this.existePagina(page)) {
 			this.paginas.value.push(page);
-			console.log(`Página añadida: ${page}`);
+			// console.log(`Página añadida: ${page}`);
 		}
 	}
 
@@ -112,8 +112,10 @@ class TraductorManager {
 		const response = this.messages.value.find(
 			item => item.idioma === idioma && item.page === page && item.label === label
 		);
-		console.log(`Buscando traducción para ${idioma}.${page}.${label}...`);
-		console.log('Respuesta encontrada:', response);
+		// console.log('Test', this.existeTraduccion(idioma, page, label), this.messages.value, response);
+		// return 'Test';
+		// console.log(`Buscando traducción para ${idioma}.${page}.${label}...`);
+		// console.log('Respuesta encontrada:', response);
 		if (response) {
 			// console.log(`Traducción encontrada: ${response.traduccion}`);
 			return response.traduccion;
