@@ -15,13 +15,13 @@ const props = defineProps<{
 const manager = useTraducciones()
 const lang = computed<Idioma>(() => props.idioma ?? 'es')
 
-const loadTranslation = async (lang: Idioma, page: Pagina, label: string, defaultText: string): Promise<string> => {
+const loadTranslation = async (lang: Idioma, page: Pagina, label: string, defaultText: string): Promise<string | null> => {
 	try {
 		if(manager.value.existeTraduccion(lang, page, label)) {
-			console.log('Traducción encontrada en caché:', lang, page, label)
+			console.log('Traducción encontrada en "caché":', lang, page, label)
 			setTimeout(() => {
-				console.log('Traducción encontrada en caché:', lang, page, label)
-			}, 1000)
+				console.log('Traducción encontrada en "caché":', lang, page, label)
+			}, 1)
 			return manager.value.getTraduccion(lang, page, label, defaultText)
 		}
 		const response = await manager.value.getApiTraduccion(lang, page, label)
@@ -32,7 +32,7 @@ const loadTranslation = async (lang: Idioma, page: Pagina, label: string, defaul
 		// 	manager.value.guardaNueva(lang, page, label, defaultText)
 		// 	return defaultText
 		// }
-		return response ?? defaultText
+		return response
 	} catch (error) {
 		console.error('Error al obtener la traducción:', error)
 		return defaultText

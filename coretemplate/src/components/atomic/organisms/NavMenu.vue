@@ -13,7 +13,7 @@ const currentLang = inject<Idioma>('currentLang', 'es') // Valor por defecto si 
 <template>
 	<nav>
 		<RouterLink :to="{ name: 'Home', params: { lang: currentLang } }">
-			<TraductorComponent :idioma="currentLang" :page="currentPage" label="Home">
+			<TraductorComponent :idioma="currentLang" :page="currentPage" label="home">
 				Home
 				<template #fallback>
 					<SkeletonLoader height="18px" width="109px" borderRadius="0.25em" />
@@ -23,16 +23,30 @@ const currentLang = inject<Idioma>('currentLang', 'es') // Valor por defecto si 
 				Home
 			</TraducirTexto> -->
 		</RouterLink>
-		<RouterLink :to="{ name: 'About', params: { lang: currentLang } }">
+		<RouterLink :to="{ name: 'About', params: { lang: currentLang } }"> texto sin traducir
 			<!-- <TraducirTexto  :page="currentPage??''" label="About">
 				About
 			</TraducirTexto> -->
-			<TraductorComponent :idioma="currentLang" :page="currentPage" label="Home">
-				About
+			<!-- <TraductorComponent :idioma="currentLang" :page="currentPage" label="about">
+				Sobre nosotros
 				<template #fallback>
 					<SkeletonLoader height="18px" width="109px" borderRadius="0.25em" />
 				</template>
-			</TraductorComponent>
+			</TraductorComponent> -->
 		</RouterLink>
 	</nav>
 </template>
+<style scoped>
+nav {
+	display: flex;
+	gap: 1rem;
+}
+nav a {
+	text-decoration: none;
+	color: var(--color-text);
+	font-weight: 500;
+}
+nav a:hover {
+	color: var(--color-primary);
+}
+</style>

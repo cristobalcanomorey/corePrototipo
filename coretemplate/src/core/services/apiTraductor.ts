@@ -44,6 +44,11 @@ export class ApiTraductor extends Api {
 					traduccion: 'Texto de NavBar en español',
 				},
 				{
+					page: 'NavBar',
+					label: 'home',
+					traduccion: 'enlace a Home',
+				},
+				{
 					page: 'Carrito',
 					label: 'carrito',
 					traduccion: 'Texto de Carrito en español',
@@ -125,7 +130,7 @@ export class ApiTraductor extends Api {
 			setTimeout(() => {
 				const traduccion = ApiTraductor.getTraduccion(idioma, page, label);
 				resolve(traduccion);
-			}, 5000);
+			}, 500);
 		});
 	}
 

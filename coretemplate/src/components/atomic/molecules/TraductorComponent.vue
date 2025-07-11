@@ -33,7 +33,8 @@ const defaultText = computed<string>(() => {
 })
 
 onMounted(() => {
-	// console.log('guardaNueva', currentLang, props.page, props.label, defaultText.value)
+	console.log('guardaNueva', currentLang, props.page, props.label, defaultText.value)
+	// guarda la traducción por defecto al montar el componente como si fuese una nueva
 	manager.value.guardaNueva(currentLang, props.page, props.label, defaultText.value)
 })
 

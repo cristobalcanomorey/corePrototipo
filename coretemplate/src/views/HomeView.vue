@@ -42,7 +42,13 @@ function cambioIdioma(nuevo: Idioma) {
 
 onMounted(async () => {
 	// await manager.value.getTraduccionesDeApi(currentLang.value, currentPage)
-	manager.value.getTraduccionesDeComponentes()
+
+
+
+	manager.value.setNuevasTraducciones()
+
+
+
 	// const respuestaApi = manager.value.getApiTraducciones(manager.value.getIdioma(), currentPage)
 	// const promises = []
 	// promises.push(respuestaApi)
@@ -59,12 +65,12 @@ onMounted(async () => {
 		<template #header>
 			<HeaderLayout>
 				<template #title>
-					<TraductorComponent :idioma="currentLang" page="Carrito" label="carrito">
+					<!-- <TraductorComponent :idioma="currentLang" page="Carrito" label="carrito">
 						Otra forma de traducir
 						<template #fallback>
 							<SkeletonLoader height="18px" width="109px" borderRadius="0.25em" />
 						</template>
-					</TraductorComponent>
+					</TraductorComponent> -->
 				</template>
 				<template #navigation>
 					<NavMenu />
@@ -83,9 +89,9 @@ onMounted(async () => {
 			<MainLayout>
 				<template #title>
 					<TituloPage class="home-title">
-						<TraductorComponent :idioma="currentLang" page="Home" label="titulo">
+						<!-- <TraductorComponent :idioma="currentLang" page="Home" label="titulo">
 							Texto por defecto
-						</TraductorComponent>
+						</TraductorComponent> -->
 						<!-- <TraducirTexto :page="currentPage" label="titulo">
 							Titulo del Home
 						</TraducirTexto> -->

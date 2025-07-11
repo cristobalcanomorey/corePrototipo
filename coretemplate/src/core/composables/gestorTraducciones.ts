@@ -40,7 +40,6 @@ class TraductorManager {
 
 	public constructor() {
 		this.setIdioma(document.documentElement.lang as Idioma)
-
 		this.api = new ApiTraductor()
 
 	}
@@ -60,10 +59,19 @@ class TraductorManager {
 		}
 	}
 
+
+	/**
+	 * Guarda una nueva traducción en el array de nuevasT
+	 * @param idioma Idioma de la traducción
+	 * @param page Página a la que pertenece la traducción
+	 * @param label Label de la traducción
+	 * @param original Texto original de la traducción
+	 */
 	public guardaNueva(idioma: Idioma, page: Pagina, label: string, original: string) {
+		console.log(idioma)
 		// mete dentro de originales
 		const nuevaTraduccion = {
-			idioma: idioma,
+			idioma: idioma, // POR HACER: no se guarda el 'es' sino un RefImpl
 			page: page,
 			label: label,
 			traduccion: original
@@ -71,12 +79,16 @@ class TraductorManager {
 
 		this.nuevasT.value.push(nuevaTraduccion)
 		this.addPagina(page)
-		// console.log('Guarda nueva: ', nuevaTraduccion)
-		if (!this.existeTraduccion(idioma, page, label)) {
-			this.messages.value.push(nuevaTraduccion);
-		}
+		console.log('"Nuevas": ', this.nuevasT.value);
+		// if (!this.existeTraduccion(idioma, page, label)) {
+		// 	this.messages.value.push(nuevaTraduccion);
+		// }
 	}
 
+	/**
+	 * Añade una nueva página al registro de páginas
+	 * @param page Página a la que pertenece la traducción
+	 */
 	public addPagina(page: Pagina) {
 		if (!this.existePagina(page)) {
 			this.paginas.value.push(page);
@@ -84,10 +96,22 @@ class TraductorManager {
 		}
 	}
 
+	/**
+	 * Comprueba si una página existe en el registro de páginas
+	 * @param page Página a comprobar
+	 * @returns Verdadero si la página existe, falso en caso contrario
+	 */
 	public existePagina(page: Pagina): boolean {
 		return this.paginas.value.includes(page);
 	}
 
+	/**
+	 * Comprueba si una traducción existe en el registro de traducciones
+	 * @param idioma Idioma de la traducción
+	 * @param page Página a la que pertenece la traducción
+	 * @param label Label de la traducción
+	 * @returns Verdadero si la traducción existe, falso en caso contrario
+	 */
 	public existeTraduccion(idioma: Idioma, page: string, label: string): boolean {
 		// console.log(`Comprobando si existe traducción para ${idioma}.${page}.${label}...`);
 		// console.log(this.messages.value.find(item => item.idioma === idioma && item.page === page && item.label === label));
@@ -99,6 +123,14 @@ class TraductorManager {
 		);
 	}
 
+	/**
+	 * Comprueba si una traducción existe en el registro de traducciones
+	 * @param idioma Idioma de la traducción
+	 * @param page Página a la que pertenece la traducción
+	 * @param label Label de la traducción
+	 * @param defecto Texto por defecto a utilizar si no se encuentra la traducción
+	 * @returns Verdadero si la traducción existe, falso en caso contrario
+	 */
 	public getTraduccion(idioma: Idioma, page: string, label: string, defecto: string | null = null): string {
 		/**
 		 * Si la traducción existe en messages la devuelve en su idioma
@@ -126,53 +158,89 @@ class TraductorManager {
 		return defecto ?? ''
 	}
 
+	/**
+	 * Obtiene la traducción de la API
+	 * @param idioma Idioma de la traducción
+	 * @param page Página a la que pertenece la traducción
+	 * @param label Label de la traducción
+	 * @returns La traducción obtenida o null si no se encuentra
+	 */
 	public async getApiTraduccion(idioma: Idioma, page: Pagina, label: string): Promise<string | null> {
-		return await this.api.getTraduccionAsync(idioma, page, label)
+		let traduccion
+		try {
+			traduccion = await this.api.getTraduccionAsync(idioma, page, label);
+		} catch (error) {
+			console.error(`Error al obtener la traducción de la API para ${idioma}.${page}.${label}:`, error);
+			return null;
+		}
+		if (traduccion) {
+			this.messages.value.push({
+				idioma: idioma,
+				page: page,
+				label: label,
+				traduccion: traduccion
+			} as TraduccionItem);
+			// console.log(`Traducción obtenida de la API: ${traduccion}`);
+			return traduccion;
+		} else {
+			console.warn(`No se encontró traducción en la API para ${idioma}.${page}.${label}`);
+			return null;
+		}
+
 	}
 
-	public async getApiTraducciones(idioma: Idioma, page: string): Promise<TraduccionItem[]> {
-		this.cargandoTraducciones.value = true
+	//no se usa
+	// public async getApiTraducciones(idioma: Idioma, page: string): Promise<TraduccionItem[]> {
+	// 	this.cargandoTraducciones.value = true
 
-		// Llama a la API
-		const trad = this.api.getTraduccionesPaginaAsync(idioma, page)
-		return trad
-	}
+	// 	// Llama a la API
+	// 	const trad = this.api.getTraduccionesPaginaAsync(idioma, page)
+	// 	return trad
+	// }
 
-	public async getTraduccionesDeApi(idioma: Idioma, page: string) {
-		this.messages.value = await this.api.getTraduccionesPaginaAsync(idioma, page)
-	}
+	//no se usa
+	// public async getTraduccionesDeApi(idioma: Idioma, page: string) {
+	// 	this.messages.value = await this.api.getTraduccionesPaginaAsync(idioma, page)
+	// }
 
-	public getTraduccionesDeComponentes(): TraduccionItem[] {
-		/**
-		 * Obtiene las traducciones que han recopilado los componentes TraducirTexto
-		 * y las guarda en messages
-		 */
-		const diferencia = filtrarNuevasTraduccionesNoExistentes(this.messages.value, this.nuevasT.value);
+	/**
+	 * Obtiene las traducciones que han recopilado los componentes TraducirTexto
+	 * y las guarda en messages y las envía a la API
+	 * @returns Devuelve las traducciones de la API
+	 */
+	public setNuevasTraducciones(): TraduccionItem[] {
 		/**
 		 * Evita guardar duplicadas (this.messages.value = this.nuevasT.value ?)
-		 */
+		*/
+		const diferencia = filtrarNuevasTraduccionesNoExistentes(this.messages.value, this.nuevasT.value);
+		console.log(this.messages.value, this.nuevasT.value, diferencia);
 		if (diferencia.length !== 0) {
 			this.setApiTraducciones(diferencia); // Guarda las nuevas traducciones en la API
-			this.messages.value.push(...diferencia);
+			// this.messages.value.push(...diferencia);
 		}
 
 		return this.messages.value;
 
 	}
 
-	public appendTraducciones(trad: TraduccionItem[][]) {
-		for (const traducciones of trad) {
-			for (const t of traducciones) {
-				t.idioma = t.idioma || this.idioma.value; // Aseguramos que cada item tenga el idioma
-				if (t.page && t.label && !this.existeTraduccion(t.idioma, t.page, t.label)) {
-					this.messages.value.push(t);
-					this.deLaApi.value.push(t); // Guardamos también en deLaApi
-				}
-			}
-		}
-	}
+	//no se usa
+	// public appendTraducciones(trad: TraduccionItem[][]) {
+	// 	for (const traducciones of trad) {
+	// 		for (const t of traducciones) {
+	// 			t.idioma = t.idioma || this.idioma.value; // Aseguramos que cada item tenga el idioma
+	// 			if (t.page && t.label && !this.existeTraduccion(t.idioma, t.page, t.label)) {
+	// 				this.messages.value.push(t);
+	// 				this.deLaApi.value.push(t); // Guardamos también en deLaApi
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 
+	/**
+	 * Establece las nuevas traducciones en la API
+	 * @param trad Traducciones a añadir
+	 */
 	private setApiTraducciones(trad: NuevasTraducciones) {
 		for (const nueva of trad) {
 			this.api.insertTraduccion(nueva.idioma ? nueva.idioma : '', nueva.page, nueva.label, nueva.traduccion)
