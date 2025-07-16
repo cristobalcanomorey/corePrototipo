@@ -134,6 +134,11 @@ export class ApiTraductor extends Api {
 		});
 	}
 
+	//copiar la función
+	private async existTranslate(){
+
+	}
+
 	public static getTraduccion(idioma: Idioma, page: string, label: string): string | null {
 		// console.log(`Select traduccion from traducciones_${idioma} where page = '${page}' and label = '${label}'`);
 		const traduccion = ApiTraductor.dummyTraduccionesNueva.value[idioma]?.find(

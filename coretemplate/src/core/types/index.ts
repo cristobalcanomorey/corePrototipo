@@ -39,3 +39,22 @@ export interface TraductorManager {
 }
 
 export type DummyTraduccionesNueva = Record<Idioma, TraduccionItem[]>;
+
+export type PayloadData = {
+	id: number;
+	name: string;
+	email?: string;
+	// agrega aquí los campos que necesites
+}
+
+export type JwtPayload = {
+	data: {
+		id: number
+		name: string
+		email?: string
+		// agrega los campos que uses en el payload
+	}
+	aud: string
+	iat?: number
+	exp?: number
+}

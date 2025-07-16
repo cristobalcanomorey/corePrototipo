@@ -5,24 +5,45 @@ import SkeletonLoader from '@/components/atomic/atoms/SkeletonLoader.vue'
 import type { Idioma } from '@/core/types';
 import { inject } from 'vue';
 // const route = useRoute()
-const currentPage = 'NavBar'
+const currentPage = 'Header'
 // const lang = route.params.lang as Idioma ?? 'es'
 const currentLang = inject<Idioma>('currentLang', 'es') // Valor por defecto si no se inyecta
 </script>
 
 <template>
 	<nav>
-		<RouterLink :to="{ name: 'Home', params: { lang: currentLang } }">
+		<span>
+			<TraductorComponent :idioma="currentLang" :page="currentPage" label="expertos_riego">
+				Expertos en riego, sistemas hidráulicos y energías renovables
+				<template #fallback>
+					<SkeletonLoader height="18px" width="109px" borderRadius="0.25em" />
+				</template>
+			</TraductorComponent>
+		</span>
+		<!-- <RouterLink :to="{ name: 'Home', params: { lang: currentLang } }">
 			<TraductorComponent :idioma="currentLang" :page="currentPage" label="home">
 				Home
 				<template #fallback>
 					<SkeletonLoader height="18px" width="109px" borderRadius="0.25em" />
 				</template>
 			</TraductorComponent>
-			<!-- <TraducirTexto  :page="currentPage??''" label="Home">
-				Home
-			</TraducirTexto> -->
 		</RouterLink>
+		<RouterLink :to="{ name: 'Home', params: { lang: currentLang } }">
+			<TraductorComponent :idioma="currentLang" :page="currentPage" label="productos">
+				Productos
+				<template #fallback>
+					<SkeletonLoader height="18px" width="109px" borderRadius="0.25em" />
+				</template>
+			</TraductorComponent>
+		</RouterLink>
+		<RouterLink :to="{ name: 'Home', params: { lang: currentLang } }">
+			<TraductorComponent :idioma="currentLang" :page="currentPage" label="productos">
+				Productos
+				<template #fallback>
+					<SkeletonLoader height="18px" width="109px" borderRadius="0.25em" />
+				</template>
+			</TraductorComponent>
+		</RouterLink> -->
 		<RouterLink :to="{ name: 'About', params: { lang: currentLang } }"> texto sin traducir
 			<!-- <TraducirTexto  :page="currentPage??''" label="About">
 				About

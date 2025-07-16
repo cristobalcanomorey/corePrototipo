@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import AsyncTraducir from '@/components/atomic/atoms/AsyncTraducir.vue'
 import type { Idioma, Pagina } from '@/core/types';
-import { computed, useSlots, inject, onMounted } from 'vue'
+import type { Ref } from 'vue'
+import { computed, useSlots, inject, onMounted, ref } from 'vue'
 import { useTraducciones } from '@/core/composables/gestorTraducciones';
 // import SkeletonLoader from '../atoms/SkeletonLoader.vue';
 
@@ -14,7 +15,7 @@ const props = defineProps<{
 	label: string
 }>()
 
-const currentLang = inject<Idioma>('currentLang', 'es') // Valor por defecto si no se inyecta
+const currentLang = inject<Ref<Idioma>>('currentLang', ref('es')) // Valor por defecto si no se inyecta
 
 // const idiomaActual = computed<Idioma>(() => props.idioma ?? currentLang)
 // console.log('Idioma actual:', idiomaActual)
@@ -33,9 +34,9 @@ const defaultText = computed<string>(() => {
 })
 
 onMounted(() => {
-	console.log('guardaNueva', currentLang, props.page, props.label, defaultText.value)
+	console.log('guardaNueva', currentLang.value, props.page, props.label, defaultText.value)
 	// guarda la traducción por defecto al montar el componente como si fuese una nueva
-	manager.value.guardaNueva(currentLang, props.page, props.label, defaultText.value)
+	manager.value.guardaNueva(currentLang.value, props.page, props.label, defaultText.value)
 })
 
 </script>
